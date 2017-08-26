@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace notetoself_mongodb
+namespace notetoself_mongo
 {
     public class Note {
         [BsonId]
