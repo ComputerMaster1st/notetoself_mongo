@@ -8,7 +8,7 @@ namespace notetoself_mongo
         IMongoCollection<Note> Collection;
         
         public NotesManager(string MongoUser, string MongoPass) {
-            MongoClient Mongo = new MongoClient($"mongodb://{MongoUser}:{MongoPass}@localhost:27017");
+            MongoClient Mongo = new MongoClient($"mongodb://{MongoUser}:{MongoPass}@localhost:27017/notetoself");
             IMongoDatabase Data = Mongo.GetDatabase("notetoself");
             Collection = Data.GetCollection<Note>("notes");
         }
@@ -25,9 +25,14 @@ namespace notetoself_mongo
         }
 
         public async Task<Note> GetNote(ulong UserId) {
-            var Result = await Collection.FindAsync((filter) => filter.UserId == UserId);
-            Note Note = await Result.FirstOrDefaultAsync();
-            return Note;
+            try {
+                var Result = await Collection.FindAsync((filter) => filter.UserId == UserId);
+                Note Note = await Result.FirstOrDefaultAsync();
+                return Note;
+            } catch (System.Exception e) {
+                System.Console.WriteLine(e);
+                return null;
+            }
         }
 
         public async Task<bool> DeleteNote(ulong UserId) {

@@ -4,10 +4,16 @@ using System.Xml.Serialization;
 
 namespace notetoself_mongo
 {
+    [XmlRoot("masterconfig")]
     public class MasterConfig {
-        public string Token { get; }
-        public string MongoUser { get; }
-        public string MongoPass { get; }
+        [XmlElement("token")]
+        public string Token { get; set; }
+        [XmlElement("mongouser")]
+        public string MongoUser { get; set; }
+        [XmlElement("mongopass")]
+        public string MongoPass { get; set; }
+
+        MasterConfig() {}
 
         public MasterConfig(string Token, string MongoUser, string MongoPass) {
             this.Token = Token;
