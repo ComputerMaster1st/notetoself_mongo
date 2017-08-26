@@ -6,6 +6,7 @@ namespace notetoself_mongo
     public class Note {
         [BsonId]
         public ulong UserId { get; }
+        [BsonElement("notes")]
         List<string> Notes = new List<string>();
 
         [BsonConstructor]
