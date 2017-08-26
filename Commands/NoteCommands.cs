@@ -10,8 +10,7 @@ namespace notetoself_mongo
         public async Task Add([Remainder]string RawNote) {
             if (RawNote.Length > 500) await ReplyAsync("", embed: SimpleEmbed("Notes can only be 500 characters maximum.", false));
             else {
-                Note FetchNote = await Context.NotesManager.GetNote(Context.User.Id);
-                Note Note = (FetchNote != null) ? FetchNote : await Context.NotesManager.CreateNote(Context.User.Id);
+                Note Note = await Context.NotesManager.GetNote(Context.User.Id);
 
                 Note.AddNote(RawNote);
 
@@ -26,8 +25,7 @@ namespace notetoself_mongo
         public async Task Edit(int Index, [Remainder]string RawNote) {
             if (RawNote.Length > 500) await ReplyAsync("", embed: SimpleEmbed("Notes can only be 500 characters maximum.", false));
             else {
-                Note FetchNote = await Context.NotesManager.GetNote(Context.User.Id);
-                Note Note = (FetchNote != null) ? FetchNote : await Context.NotesManager.CreateNote(Context.User.Id);
+                Note Note = await Context.NotesManager.GetNote(Context.User.Id);
 
                 bool EditResult = Note.EditNote(Index, RawNote);
                 bool UpdateResult = await Context.NotesManager.UpdateNote(Context.User.Id, Note);
@@ -41,8 +39,7 @@ namespace notetoself_mongo
 
         [Command("delete")]
         public async Task Delete(int Index) {
-            Note FetchNote = await Context.NotesManager.GetNote(Context.User.Id);
-            Note Note = (FetchNote != null) ? FetchNote : await Context.NotesManager.CreateNote(Context.User.Id);
+            Note Note = await Context.NotesManager.GetNote(Context.User.Id);
 
             bool DeleteNoteResult = Note.DeleteNote(Index);
 
@@ -64,8 +61,7 @@ namespace notetoself_mongo
 
         [Command("list")]
         public async Task List() {
-            Note FetchNote = await Context.NotesManager.GetNote(Context.User.Id);
-            Note Note = (FetchNote != null) ? FetchNote : await Context.NotesManager.CreateNote(Context.User.Id);
+            Note Note = await Context.NotesManager.GetNote(Context.User.Id);
 
             if (Note.CountNotes() > 0) {
                 List<string> Notes = Note.ListNotes();
@@ -113,14 +109,19 @@ namespace notetoself_mongo
                 Users = Users + (await Guild.GetUsersAsync()).Count;
             }
 
+            long UserNotes = await Context.NotesManager.CountUserNotes();
+            int AllNotes = await Context.NotesManager.CountAllNotes();
+
             Builder.Title = "Note to Self Info!";
             Builder.Color = Color.Blue;
+            Builder.AddField("Bot Statistics:", "Number of Guilds, Channels & Users...");
             Builder.AddInlineField("Guilds: ", Guilds.Count);
             Builder.AddInlineField("Channels: ", Channels);
             Builder.AddInlineField("Users: ", Users);
 
-            Builder.AddInlineField("Users With Notes: ", Context.NotesManager.CountUserNotes());
-            Builder.AddInlineField("Total Notes: ", Context.NotesManager.CountAllNotes());
+            Builder.AddField("Note Statistics:", "Number of Notes...");
+            Builder.AddInlineField("Users With Notes: ", UserNotes);
+            Builder.AddInlineField("Total Notes: ", AllNotes);
 
             await ReplyAsync("", embed: Builder.Build());
         }
@@ -131,7 +132,7 @@ namespace notetoself_mongo
 
             Builder.Title = "Note to Self Help!";
             Builder.Color = Color.Blue;
-            Builder.Description = "Note to You... Remember to memorize all these commands! This is all I do!";
+            Builder.Description = "**Note to You... Remember to memorize all these commands! This is all I do! You can contact the developer at https://discord.gg/Czw5ffx **";
             Builder.AddField("notetoself! add <note>", "Enter your note into the note parameter to create it.");
             Builder.AddField("notetoself! list", "List all notes you have. Warning, this might spam many embeds if you have so many notes!");
             Builder.AddField("notetoself! edit <note id> <note>", "Edit the specified note by ID with the new note.");

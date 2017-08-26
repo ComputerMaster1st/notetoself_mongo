@@ -13,7 +13,7 @@ namespace notetoself_mongo
             Collection = Data.GetCollection<Note>("notes");
         }
 
-        public async Task<Note> CreateNote(ulong UserId) {
+        async Task<Note> CreateNote(ulong UserId) {
             Note Note = new Note(UserId);
             await Collection.InsertOneAsync(Note);
             return Note;
@@ -25,14 +25,11 @@ namespace notetoself_mongo
         }
 
         public async Task<Note> GetNote(ulong UserId) {
-            try {
-                var Result = await Collection.FindAsync((filter) => filter.UserId == UserId);
-                Note Note = await Result.FirstOrDefaultAsync();
-                return Note;
-            } catch (System.Exception e) {
-                System.Console.WriteLine(e);
-                return null;
-            }
+            var Result = await Collection.FindAsync((filter) => filter.UserId == UserId);
+            Note Note = await Result.FirstOrDefaultAsync();
+
+            if (Note != null) return Note;
+            else return await CreateNote(UserId);            
         }
 
         public async Task<bool> DeleteNote(ulong UserId) {
@@ -41,12 +38,12 @@ namespace notetoself_mongo
         }
 
         public async Task<long> CountUserNotes() {
-            return await Collection.CountAsync(null);
+            return await Collection.CountAsync(FilterDefinition<Note>.Empty);
         }
 
         public async Task<int> CountAllNotes() {
             int Count = 0;
-            List<Note> Notes = await (await Collection.FindAsync(null)).ToListAsync();
+            List<Note> Notes = await (await Collection.FindAsync(FilterDefinition<Note>.Empty)).ToListAsync();
 
             foreach (Note Note in Notes)
                 Count = Count + Note.CountNotes();
