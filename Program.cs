@@ -20,6 +20,8 @@ namespace notetoself_mongo
 
             if (Config == null) Config = MasterConfig.Setup();
 
+            Config.Save();
+
             Notes = new NotesManager(Config.MongoUser, Config.MongoPass);
 
             DiscordSocketConfig ClientConfig = new DiscordSocketConfig() {
