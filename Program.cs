@@ -56,7 +56,7 @@ namespace notetoself_mongo
             if (Message == null) return;
             int ArgPos = 0;
 
-            if (!Message.HasStringPrefix("notetoself! ", ref ArgPos)) return;
+            if (!(Message.HasStringPrefix("notetoself! ", ref ArgPos) || Message.HasMentionPrefix(Client.CurrentUser, ref ArgPos))) return;
             if (Message.Author.IsBot || Message.Author.IsWebhook) return;
 
             IGuildUser User = (IGuildUser)Message.Author;
