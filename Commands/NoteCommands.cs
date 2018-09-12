@@ -8,7 +8,7 @@ namespace notetoself_mongo
     public class NoteCommands : ModuleBase<NoteContext> {
         [Command("add")]
         public async Task Add([Remainder]string RawNote) {
-            if (RawNote.Length > 500) await ReplyAsync("", embed: SimpleEmbed("Notes can only be 500 characters maximum.", false));
+            if (RawNote.Length > 1800) await ReplyAsync("", embed: SimpleEmbed("Notes can only be 1800 characters maximum.", false));
             else {
                 Note Note = await Context.NotesManager.GetNote(Context.User.Id);
 
@@ -23,7 +23,7 @@ namespace notetoself_mongo
 
         [Command("edit")]
         public async Task Edit(int Index, [Remainder]string RawNote) {
-            if (RawNote.Length > 500) await ReplyAsync("", embed: SimpleEmbed("Notes can only be 500 characters maximum.", false));
+            if (RawNote.Length > 1800) await ReplyAsync("", embed: SimpleEmbed("Notes can only be 1800 characters maximum.", false));
             else {
                 Note Note = await Context.NotesManager.GetNote(Context.User.Id);
 
@@ -74,10 +74,11 @@ namespace notetoself_mongo
                 Builder.Color = Color.Blue;
                     
                 foreach (string RawNote in Notes) {
-                    if (CharacterCount > 3400) {
+                    if (CharacterCount > 3000) {
                         Embeds.Add(Builder);
                         Builder = new EmbedBuilder();
                         Builder.Color = Color.Blue;
+                        CharacterCount = 0;
                     }
 
                     int Index = Notes.IndexOf(RawNote);                    
@@ -88,7 +89,9 @@ namespace notetoself_mongo
                     CharacterCount = CharacterCount + SubCharCount;
                 }
 
-                if (CharacterCount <= 3400) Embeds.Add(Builder);
+                if (CharacterCount <= 3000) {
+                    Embeds.Add(Builder);
+                }
 
                 foreach (EmbedBuilder Build in Embeds)
                     await ReplyAsync("", embed: Build.Build());
