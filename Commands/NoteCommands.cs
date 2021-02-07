@@ -143,6 +143,7 @@ namespace notetoself_mongo
             Builder.AddField("notetoself! info", "Get bot statistics. Nothing more, nothing less.");
             Builder.AddField("notetoself! invite", "Get bot invite.");
             Builder.AddField("notetoself! help", "You are dumb if you want to know what this does.");
+            Builder.AddField("Shortened Prefix", "You can use \"nts!\" as a smaller prefix.");
 
             await ReplyAsync("", embed: Builder.Build());
         }
